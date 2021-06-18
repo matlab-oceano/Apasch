@@ -8,16 +8,16 @@ RS232:
   dsrdtr: False
 TSG:
   NAME: TSG
-  is_active: False
+  is_active: True
   type: UDP
-  ADRESS: 127.3.0.1
-  PORT: 12345
+  ADRESS: localhost
+  PORT: 13002
 NMEA:
   NAME: NMEA
-  is_active: False
+  is_active: True
   type: UDP
-  ADRESS: 127.3.0.1
-  PORT: 12345
+  ADRESS: localhost
+  PORT: 10006
 NTP :
   is_active: True
   ADRESS: ntp1.jussieu.fr
@@ -34,8 +34,16 @@ GENERAL:
       Tr: 24
     C:
       send: C
-      Display: mersure Cellule
+      Display: mesure Cellule
       Tr: 6
+    E:
+      send: E
+      display: 10 cps pompe Alc
+      Tr : 0.5
+    J:
+      send: J
+      display : 10 cps pompe pH
+      Tr: 0.5
     K:
       send: K
       display: Water_ON

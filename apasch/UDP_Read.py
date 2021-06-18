@@ -10,7 +10,7 @@ class Udp:
     def __init__(self, PARAM):
         self.PARAM = PARAM
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind((PARAM["ADRESS"], PARAM["PORT"]))
+        self.sock.bind(("", PARAM["PORT"]))
 
     def read_Udp(self):
         try :
