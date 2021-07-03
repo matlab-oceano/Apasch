@@ -8,22 +8,22 @@ RS232:
   dsrdtr: False
 TSG:
   NAME: TSG
-  is_active: True
+  is_active: False
   type: UDP
   ADRESS: localhost
   PORT: 13002
 NMEA:
   NAME: NMEA
-  is_active: True
+  is_active: False
   type: UDP
   ADRESS: localhost
   PORT: 10006
 NTP :
-  is_active: True
+  is_active: False
   ADRESS: ntp1.jussieu.fr
 GENERAL:
     PH_ACTIVE: True
-    ALC_ACTIVE: True
+    ALC_ACTIVE: False
     A:
       send: A
       display: help
