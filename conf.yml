@@ -19,7 +19,7 @@ NMEA:
   ADRESS: localhost
   PORT: 10006
 NTP :
-  is_active: False
+  is_active: True
   ADRESS: ntp1.jussieu.fr
 GENERAL:
     PH_ACTIVE: True
@@ -80,13 +80,14 @@ GENERAL:
       - cycle_blanc:
         iteration: 3
         Tr: 6
-        send: C
+        send: 
+          - C
         display: Blanc_pH
       - cycle_mesure:
         iteration: 4
         Tr: 26
         send: 
-          - N 
+          - N
           - C
           - C
         display: Mesure_pH
@@ -100,7 +101,8 @@ GENERAL:
       - cycle_mesure:
         iteration: 4
         Tr: 24
-        send: M
+        send: 
+          - M
         display: Mesure_Alc
     RINCE_ph:
       send:

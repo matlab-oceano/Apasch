@@ -29,13 +29,15 @@ class Apasch(object):
         cwd = os.getcwd()
         DATA_DIR = os.path.join(cwd)
         self.DATA_DIR=DATA_DIR
-        self.data_calule=[]
-        colonnes=['CYCLE','DATE+HEURE','TEMP','A591','A437',"R'",
+        colonnes_alc=['CYCLE','DATE+HEURE','TEMP','A591','A437',"R'",
                                        'BLANC T591','BLANC T434','BLANC T810',
                                        'MESURE T591','MESURE T434','MESURE T810',
                                        'NH','NL','NTH(ALC)','RTH(ALC)','Alc 1',
                                        'Alc 2','Alc 3','Alc Sb']
-        self.data_alk_calcule=pd.DataFrame(columns=colonnes)
+        colonnes_pH=['Date','Temp','pH','Abs_LED3','Abs_LED2','Abs_LED1','R_indic']
+        
+        self.data_calcule=pd.DataFrame(columns=colonnes_pH)
+        self.data_alk_calcule=pd.DataFrame(columns=colonnes_alc)
         self.campagne=campagne
         self.CTE_APASCH = CTE_APASCH
         
@@ -44,6 +46,8 @@ class Apasch(object):
         return msg
     def __repr__(self):
         return self.__str__()
+
+        
     
     def list_apasch_files(self,extension='TXT',dossier_apasch=''):
         FID = ReadFile()
@@ -64,22 +68,40 @@ class Apasch(object):
                 
 
 
+    
+    def triplicate (self, data_pd) :
+            for i in range(z,z+14,3) :#average the triplicate data:
+                il=il+1;
+                Ti.append(data_pd.iloc[i][10]);
+                Avg_LED1.append((data_pd['LAMBDA_1'][i:i+3].mean()));
+                Avg_LED2.append((data_pd['LAMBDA_2'][i:i+3].mean()));
+                Avg_LED3.append((data_pd['LAMBDA_3'][i:i+3].mean()));
+                Avg_Ref_LED1.append((data_pd['NL'][i:i+3].mean()));
+                Avg_Ref_LED2.append((data_pd['Nthph'][i:i+3].mean()));
+                Avg_Ref_LED3.append((data_pd['100_T_cel'][i:i+3].mean()));
+        
+        
 
     def calcul_pH(self,data_pd) :
         
-        Abs_LED1 = np.zeros((1,4))
-        Abs_LED2 = np.zeros((1,4))
-        Abs_LED3 = np.zeros((1,4))
-        R_indic  = np.zeros((1,4))
+        # Initialisation 
+        # Salinité
+        S=self.salinity;
+        size_data=15
+        Abs_LED1 = np.zeros((size_data//15,4))
+        Abs_LED2 = np.zeros((size_data//15,4))
+        Abs_LED3 = np.zeros((size_data//15,4))
+        R_indic  = np.zeros((size_data//15,4))
         pHj  = []
         temp=[]
         datef=[]
-        S=self.salinity
+        
         zl=0
         for z in range (0,15,15) : #1 measurement=15 lines
             zl+=1;
         # date of the sample
-            date_sample=data_pd['DATETIME'];
+            #date_sample=data_pd.iloc[z][0]+' '+data_pd.iloc[z][1];
+            date_sample=data_pd.iloc[z][0]
         # sample temperature= average of temperature during all the measurements of the sample    
             T=np.mean(data_pd['T_cel'][z:z+14])
             il=0 
@@ -93,14 +115,13 @@ class Apasch(object):
             
             for i in range(z,z+14,3) :#average the triplicate data:
                 il=il+1;
-                Ti.append(data_pd.iloc[i,11]);
-                Avg_LED1.append(np.nanmean(data_pd['LAMBDA_1'][i:i+3]));
-                Avg_LED2.append(np.nanmean(data_pd['LAMBDA_2'][i:i+3]));
-                Avg_LED3.append(np.nanmean(data_pd['LAMBDA_3'][i:i+3]));
-                Avg_Ref_LED1.append(np.nanmean(data_pd['NL'][i:i+3]));
-                Avg_Ref_LED2.append(np.nanmean(data_pd['Nthph'][i:i+3]));
-                Avg_Ref_LED3.append(np.nanmean(data_pd['100_T_cel'][i:i+3]));
-                
+                Ti.append(data_pd.iloc[i][9]/100);
+                Avg_LED1.append(data_pd.iloc[i:i+3,3].mean());
+                Avg_LED2.append(data_pd.iloc[i:i+3,4].mean());
+                Avg_LED3.append(data_pd.iloc[i:i+3,5].mean());
+                Avg_Ref_LED1.append((data_pd.iloc[i:i+3,7].mean()));
+                Avg_Ref_LED2.append((data_pd.iloc[i:i+3,8].mean()));
+                Avg_Ref_LED3.append((data_pd.iloc[i:i+3,9].mean()));
         
            #calcul des absorbances pour chaque addition de colorant :
             for j in range (0,4) : 
@@ -124,10 +145,11 @@ class Apasch(object):
         temp=np.array(temp)
         temp.reshape(-1,1)
         df = pd.DataFrame({'Date': datef,'Temp':temp,'pH':pHj,'Abs_LED3':Abs_LED3[:,-1],'Abs_LED2':Abs_LED2[:,-1],'Abs_LED1':Abs_LED1[:,-1],'R_indic' :R_indic[:,-1]} )
-        self.data_calcule = df.round(4)
+  #      self.data_calcule = df.round(4)
+        self.data_calcule = pd.concat([self.data_calcule,df.round(4)]
+            , axis=0, join="inner",ignore_index=True)
         return True
-
-
+    
     def calcul_alk_ed_cycle(self,un_cycle): 
         # moyennes du cycle
         moyennes=param_alk().calcul_moyenne (un_cycle)
@@ -142,29 +164,29 @@ class Apasch(object):
         
 if __name__=="__main__":
     print('classe apasch  ok')
-    apa=Apasch()
-    apa.campagne='Moose 2019'
-    apa.list_apasch_files('TXT','apasch_files')
-    apa.head=['DATE','TIME','COUNT','TYPE','LED1','LED2','LED3','NH','Ref_LED1','Ref_LED2','Ref_LED3','T_cel']
-    apa.CTE_APASCH = {"header": None,
-                  "sep": '\s+',
-                  "ext": 'txt',
-                  "col": [],
-                  "t_format": '%Y/%m/%d %H:%M:%S',
-                  "t_name": 'DATE_TIME',
-                  "path": apa.DATA_DIR,
-                  }
-    # On transforme le premier fichier de donnees (indice 0 ) en dataframe  
-    apa.file2dataframe(0)
-    # On fait le calcul pour chaque cycle du fichier 
-    print("Caclul de l'alcalinité en eaux douces : ")
-    # un cycle tient sur 6 lignes
-    for j in range(0,len(apa.data)//6)  :
-        un_cycle=apa.data[apa.data['COUNT']==j+1]
-        apa.calcul_alk_ed_cycle(un_cycle)
-    # Ecriture sur un fichier txt des resultats
+    # apa=Apasch()
+    # apa.campagne='Moose 2019'
+    # apa.list_apasch_files('TXT','apasch_files')
+    # apa.head=['DATE','TIME','COUNT','TYPE','LED1','LED2','LED3','NH','Ref_LED1','Ref_LED2','Ref_LED3','T_cel']
+    # apa.CTE_APASCH = {"header": None,
+    #               "sep": '\s+',
+    #               "ext": 'txt',
+    #               "col": [],
+    #               "t_format": '%Y/%m/%d %H:%M:%S',
+    #               "t_name": 'DATE_TIME',
+    #               "path": apa.DATA_DIR,
+    #               }
+    # # On transforme le premier fichier de donnees (indice 0 ) en dataframe  
+    # apa.file2dataframe(0)
+    # # On fait le calcul pour chaque cycle du fichier 
+    # print("Caclul de l'alcalinité en eaux douces : ")
+    # # un cycle tient sur 6 lignes
+    # for j in range(0,len(apa.data)//6)  :
+    #     un_cycle=apa.data[apa.data['COUNT']==j+1]
+    #     apa.calcul_alk_ed_cycle(un_cycle)
+    # # Ecriture sur un fichier txt des resultats
             
-    filename='catenoy_alk.txt'
-    sep='\t'
-    apa.data_alk_calcule.to_csv(filename,columns=['CYCLE','DATE+HEURE','TEMP','Alc 1','Alc 2','Alc 3','Alc Sb'],float_format='%.6f'
-               ,sep = sep,index=None)  
+    # filename='catenoy_alk.txt'
+    # sep='\t'
+    # apa.data_alk_calcule.to_csv(filename,columns=['CYCLE','DATE+HEURE','TEMP','Alc 1','Alc 2','Alc 3','Alc Sb'],float_format='%.6f'
+    #            ,sep = sep,index=None)  
