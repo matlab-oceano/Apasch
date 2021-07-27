@@ -80,22 +80,22 @@ GENERAL:
       - cycle_blanc:
         iteration: 3
         Tr: 6
-        send: C
+        send: 
+	 - C
         display: Blanc_pH
       - cycle_mesure:
         iteration: 4
         Tr: 26
         send: 
-          - N 
-          - C
-          - C
+	 - N
+	 - C
+	 - C
         display: Mesure_pH
     ALC:
       - cycle_blanc:
         iteration: 3
         Tr: 6
-        send: 
-          - B
+        send: B
         display: Blanc_Alc
       - cycle_mesure:
         iteration: 4

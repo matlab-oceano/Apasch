@@ -22,8 +22,8 @@ NTP :
   is_active: False
   ADRESS: ntp1.jussieu.fr
 GENERAL:
-    PH_ACTIVE: True
-    ALC_ACTIVE: False
+    PH_ACTIVE: False
+    ALC_ACTIVE: True
     A:
       send: A
       display: help
@@ -83,19 +83,15 @@ GENERAL:
         send: C
         display: Blanc_pH
       - cycle_mesure:
-        iteration: 4
+        iteration: 5
         Tr: 26
-        send: 
-          - N 
-          - C
-          - C
+        send: N
         display: Mesure_pH
     ALC:
       - cycle_blanc:
         iteration: 3
         Tr: 6
-        send: 
-          - B
+        send: B
         display: Blanc_Alc
       - cycle_mesure:
         iteration: 4
