@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import yaml
-
+from apasch_class_alc import *
 import Apasch_cycles
 import UDP_Read
 import time
@@ -9,7 +9,16 @@ import save_Data
 import Apasch2data
 import dataBuffer
 import pandas as pd
+# import only system from os
+from os import system, name
 
+def clear_screen():
+    # for windows
+    if name == 'nt':
+        _ = system('cls')
+    # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = system('clear') 
 
 class Main():
 
@@ -26,91 +35,8 @@ class Main():
         self.CTE = yaml_content["CTE"]
         self.apasch = Apasch_cycles.Interface(yaml_content["RS232"])
         self.conv = Apasch2data.calc()
+        self.data_cycle=pd.DataFrame([{key: '' for key in self.SAUVE["HEADER"]}])
 
-        """self.GENERAL = {
-            "PH_ACTIVE": True,
-            "ALC_ACTIVE": True,
-            "Q": {
-                "send": "Q",
-                "display": "stirrer_Alc_On"
-            },
-            "C": {
-                "send": "C",
-                "display": "Read_Ph"
-            },
-            "B": {
-                "send": "B",
-                "display": "Read_Alc"
-            },
-            "S": {
-                "send": "S",
-                "display": "stirrer_pH_On"
-            },
-            "R": {
-                "send": "R",
-                "display": "stirrer_Alc_Off"
-            },
-            "T": {
-                "send": "T",
-                "display": "stirrer_pH_Off"
-            },
-            "K": {
-                "send": "K",
-                "display": "Water_ON"
-            },
-            "L": {
-                "send": "L",
-                "display": "Water_OFF"
-            },
-            "N": {
-                "send": "N",
-                "display": "Macro_com_pH"
-            },
-            "M": {
-                "send": "M",
-                "display": "Macro_com_Alc"
-            },
-            "PH1": {
-                "cycle_blanc": {
-                    "iteration": 3,
-                    "Tr": 6,
-                    "send": "C",
-                    "display": "Blanc_pH ",
-                },
-                "cycle_mesure": {
-                    "iteration": 4,
-                    "Tr": 26,
-                    "send": "N",
-                    "display": "Mesure_pH ",
-                }},
-            "ALC": {
-                "cycle_blanc": {
-                    "iteration": 3,
-                    "Tr": 6,
-                    "send": "C",
-                    "display": "Blanc_Alc ",
-                },
-                "cycle_mesure": {
-                    "iteration": 4,
-                    "Tr": 24,
-                    "send": "M",
-                    "display": "Mesure_Alc ",
-                }},
-            "RINCE_ph": {
-                "send": ["S", "K", "T", "L"],
-                "Tp": 5,  # temps pompage
-                "Tr": 1,  # temps repos
-                "nb_seq": 3,
-                "display": "rinçage pH"
-            },
-            "RINCE_Alc": {
-                "send": ["Q", "K", "R", "L"],
-                "Tp": 5,  # temps pompage
-                "Tr": 1,  # temps repos
-                "nb_seq": 3,
-                "display": "rinçage Alc"
-            }
-        }"""
 
     def conf(self):
 
@@ -182,30 +108,7 @@ class Main():
 
         return time.strftime('%Y/%m/%d %H:%M:%S ')
 
-    def cycle(self, cycle, sauve, count):
-        data_cycle = pd.DataFrame(columns=self.SAUVE["HEADER"])
-        for key in self.GENERAL[cycle]:
-            it = 0
-            while it < key["iteration"]:
-                it+=1
-                read = {key: '' for key in self.SAUVE["HEADER"]}
-                print(" {} --->{}_{}_{} send {}  ".format(time.strftime('%Y/%m/%d %H:%M:%S '), key['display'],cycle,it, key['send'] ))
-                read.update({
-                    "DATETIME": time.strftime('%Y/%m/%d %H:%M:%S '),
-                    "COUNT": count,
-                    "TYPE": key['display'],
-                    })
-                read.update(self.trame())
-                read.update(self.tsg())
-                read.update(self.conv.temperature(cycle=cycle,
-                                                  data=self.apasch.send(cmd=key['send'],
-                                                  tr=key['Tr']),
-                                                  CTE=self.CTE["THERMISTANCE"]))
-                sauve.write(read)
-                data_cycle = data_cycle.append(read, ignore_index=True)
-                print(data_cycle.tail(1))
-
-        return data_cycle
+ 
     def cmd_simple(self, cmd):
         if cmd !="exit":
             try:
@@ -217,40 +120,86 @@ class Main():
 
                 return "error"
 
+
+    def cycle(self, cycle, sauve, count):
+        data_cycle = pd.DataFrame(columns=self.SAUVE["HEADER"])
+        for key in self.GENERAL[cycle]:
+            it = 0
+            while it < key["iteration"]:
+                it+=1
+                read = {key: '' for key in self.SAUVE["HEADER"]}
+                ### A verifier ! 
+                read.update({
+                    "DATETIME": time.strftime('%Y/%m/%d %H:%M:%S '),
+                    "COUNT": count,
+                    "TYPE": key['display'],
+                    })
+                read.update(self.trame())
+                read.update(self.tsg())
+                for send in key["send"]:
+                    clear_screen()
+                    print(" {}_{} : ".format(key['display'],it))
+                    print(" {} ---> send {}  ".format(time.strftime('%Y/%m/%d %H:%M:%S '), send))
+                  #  print(" {} --->{}_{}_{} send {}  ".format(time.strftime('%Y/%m/%d %H:%M:%S '), key['display'],cycle,it, send ))
+                    CTE=self.CTE["THERMISTANCE"]
+                    tr=key['Tr']
+                    cmd=send
+                    data=self.apasch.send(cmd,tr)
+                    read.update(self.conv.temperature(cycle,data,CTE))
+                    sauve.write(read)
+                    self.data_cycle = self.data_cycle.append(read, ignore_index=True)
+                #print(self.data_cycle.tail(1))
+
+        return data_cycle
+    
+   
     def close(self):
         pass
 
-    def modeAuto_Ph(self, count):
+    def modeAuto_Ph(self, count , apa):
 
-        if self.GENERAL["PH_ACTIVE"]:
+ #       if self.GENERAL["PH_ACTIVE"]:
             # self.rince_cel(cel="RINCE_ph")
             self.cycle("PH1", self.save_Raw_ph, count)
-
-            return
-
-    def modeAuto_ALC(self, count):
-        if self.GENERAL["ALC_ACTIVE"]:
+            cycle_brut=self.data_cycle
+            if count == 0 : cycle_brut.drop(0,0,inplace=True)
+            apa.calcul_pH(cycle_brut)
+            return apa.data_calcule    
+            
+    def modeAuto_ALC(self, count,apa):
+#        if self.GENERAL["ALC_ACTIVE"]:
             #self.rince_cel("RINCE_Alc")
             self.cycle("ALC", self.save_Raw_Alc, count)
+            cycle_brut=self.data_cycle
+            if count == 0 : cycle_brut.drop(0,0,inplace=True)
+            apa.calcul_alk_ed_cycle(cycle_brut)
+            return apa.data_alk_calcule
 
-            return
 
 
 if __name__ == '__main__':
 
     main = Main()
     main.conf()
+    apa=Apasch()
     cmd = ''
     name = ''
+
 
     while cmd != "stop":
         cmd = input("enter mode (cycle/single/test/stop)? ")
         if cmd == "cycle":
             try:
                 COUNT = 0
-                while True:
-                    ph = main.modeAuto_Ph(COUNT)
-                    alc = main.modeAuto_ALC(COUNT)
+                while COUNT < 1 :
+             #   while True:
+                    if main.GENERAL["PH_ACTIVE"]:
+                        pH = main.modeAuto_Ph(COUNT,apa)
+                        print(pH)
+                    if main.GENERAL["ALC_ACTIVE"]:
+                        alc = main.modeAuto_ALC(COUNT,apa)
+                        print(alc[['DATE+HEURE','CYCLE',
+                                                        'TEMP','Alc 1','Alc 2','Alc 3','Alc Sb']])
                     COUNT += 1
             except KeyboardInterrupt:
                 print("boucle interrompue")
@@ -264,4 +213,4 @@ if __name__ == '__main__':
             print(main.trame())
             print(main.tsg())
         elif cmd == "stop":
-            exit()
+            main.data_cycle
