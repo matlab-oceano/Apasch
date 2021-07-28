@@ -33,12 +33,13 @@ class Main():
 
 
     def clear_screen(self):
-            # for windows
-        if name == 'nt':
-            _ = system('cls')
-            # for mac and linux(here, os.name is 'posix')
-        else:
-            _ = system('clear') 
+        print('\n')
+        #     # for windows
+        # if name == 'nt':
+        #     _ = system('cls')
+        #     # for mac and linux(here, os.name is 'posix')
+        # else:
+        #     _ = system('clear') 
                 
     def conf(self):
 
