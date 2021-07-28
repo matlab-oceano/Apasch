@@ -23,8 +23,8 @@ class Save:
 
     def create(self, type, name):
         self.timestart = strftime(self.FILEFREQ)
-        self.FID = "{}_{}_{}_{}_{}".format(type,self.FILENAME,name,strftime('%m%d-%Y_%H%M%S'),".csv")
-        print(self.FILEPATH,type,self.FILENAME,strftime('%m%d-%Y_%H%M%S'),".csv")
+        self.FID = "{}_{}_{}_{}_{}".format(type,self.FILENAME,name,strftime('%m%d-%Y_%H%M%S'),".txt")
+        print(self.FILEPATH,type,self.FILENAME,strftime('%m%d-%Y_%H%M%S'),".txt")
         with open(self.FID, 'a') as self.csvfile:
             self.fieldnames = self.HEADER
             writer = csv.DictWriter(self.csvfile, fieldnames=self.fieldnames)
