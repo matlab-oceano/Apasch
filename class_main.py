@@ -32,15 +32,18 @@ class Main():
         self.save_Raw_Alc = []
 
 
+    def clear_screen2(self):
+            # for windows
+        if name == 'nt':
+            _ = system('cls')
+            # for mac and linux(here, os.name is 'posix')
+        else:
+            _ = system('clear')
+
     def clear_screen(self):
-        print('\n')
-        #     # for windows
-        # if name == 'nt':
-        #     _ = system('cls')
-        #     # for mac and linux(here, os.name is 'posix')
-        # else:
-        #     _ = system('clear') 
-                
+            # for windows
+        print('')
+
     def conf(self):
 
         #############_init UDP NMEA_########################
@@ -62,10 +65,12 @@ class Main():
         if self.GENERAL["PH_ACTIVE"]:
             print('Voie pH activé')
             self.save_Raw_ph = save_Data.Save(PARAM=self.SAUVE, type="RAW",name="PH" )
+            self.filename=self.save_Raw_ph.FID
 
         if self.GENERAL["ALC_ACTIVE"]:
             print('Voie Alcalinité activé')
             self.save_Raw_Alc = save_Data.Save(PARAM=self.SAUVE, type="RAW", name="ALC")
+            self.filename=self.save_Raw_Alc.FID
 
         return self.GENERAL
 

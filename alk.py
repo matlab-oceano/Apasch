@@ -89,17 +89,18 @@ class param_alk(object):
         df=un_cycle
         # calcul des moyennes 
         CYCLE=int(df['COUNT'].mean())
-        TEMP=df['T_cel'].mean()/100
+        TEMP=df['T_cel'].mean()
         NH=df.iloc[:,6].mean()
         NL=df.iloc[:,7].mean()
         NTH=df.iloc[:,8].mean()
         RTH=df.iloc[:,9].mean()
-        T810_blanc=df[df.iloc[:,2]=='Blanc_Alc'].mean().iloc[1]
-        T810_mesure=df[df.iloc[:,2]=='Mesure_Alc'].mean().iloc[1]
-        T434_blanc=df[df.iloc[:,2]=='Blanc_Alc'].mean().iloc[3]
-        T434_mesure=df[df.iloc[:,2]=='Mesure_Alc'].mean().iloc[3]
-        T591_blanc=df[df.iloc[:,2]=='Blanc_Alc'].mean().iloc[2]
-        T591_mesure=df[df.iloc[:,2]=='Mesure_Alc'].mean().iloc[2] 
+
+        T810_blanc=df[df.iloc[:,2]=='Blanc_Alc'].iloc[:,3].mean()
+        T810_mesure=df[df.iloc[:,2]=='Mesure_Alc'].iloc[:,3].mean()
+        T434_blanc=df[df.iloc[:,2]=='Blanc_Alc'].iloc[:,5].mean()
+        T434_mesure=df[df.iloc[:,2]=='Mesure_Alc'].iloc[:,5].mean()
+        T591_blanc=df[df.iloc[:,2]=='Blanc_Alc'].iloc[:,4].mean()
+        T591_mesure=df[df.iloc[:,2]=='Mesure_Alc'].iloc[:,4].mean()
         # calcul des deux coeff avec log
         A591=( np.log10(T591_blanc/T591_mesure) - np.log10( T810_blanc/T810_mesure) ) /2.2
         A437=( np.log10( T434_blanc/T434_mesure)-np.log10( T810_blanc/T810_mesure) ) /2.2

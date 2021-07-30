@@ -20,7 +20,6 @@ class Save:
         elif type == 'LOG':
             self.FILEPATH= PARAM['FID']+"log"
             self.create('AVG_',name)
-
     def create(self, type, name):
         self.timestart = strftime(self.FILEFREQ)
         self.FID = "{}_{}_{}_{}_{}".format(type,self.FILENAME,name,strftime('%m%d-%Y_%H%M%S'),".txt")
@@ -28,8 +27,10 @@ class Save:
         with open(self.FID, 'a') as self.csvfile:
             self.fieldnames = self.HEADER
             writer = csv.DictWriter(self.csvfile, fieldnames=self.fieldnames)
-
             writer.writeheader()
+
+    def get_fid(self):
+        return self.FID
 
     def write(self, data):
         with open(self.FID, 'a') as self.csvfile:
