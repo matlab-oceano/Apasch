@@ -62,6 +62,7 @@ class commande(Main):
 
 
     def cycle(self, cycle, sauve, count):
+        super().clear_screen()
         for key in self.GENERAL[cycle]:
             it = 0
             while it < key["iteration"]:
@@ -69,7 +70,6 @@ class commande(Main):
                 read = {key: '' for key in self.SAUVE["HEADER"]}
                 for send in key["send"]:
                     # effacer la console
-                    super( ).clear_screen()
                     # affichage à l'ecran
                     print("Cycle {} , {}_{} : ".format(count ,key['display'],it))
                     CTE=self.CTE["THERMISTANCE"]
@@ -79,7 +79,7 @@ class commande(Main):
                     super( ).update_read(read,count,key,cycle,commande,CTE)
                     sauve.write(read)
                     self.data_cycle = self.data_cycle.append(read, ignore_index=True)
-
+                    print(self.data_cycle.tail(1))
 
     def modeAuto_Ph(self, count , apa):
 
@@ -107,6 +107,7 @@ if __name__ == '__main__':
 
 
     main = commande()
+    k = plot_ph()
     a = main.filename
     apa=Apasch()
     cmd = ''
@@ -128,8 +129,7 @@ if __name__ == '__main__':
                         pH = main.modeAuto_Ph(COUNT,apa)
                         print(pH)
                         #commande().clear_screen()
-                        #k = plot_ph()
-                        #k.lancer_plot()
+
                         with open('data.txt', 'a') as csv_file:
                             csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
                             info = {

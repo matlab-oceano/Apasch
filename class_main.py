@@ -32,7 +32,7 @@ class Main():
         self.save_Raw_Alc = []
 
 
-    def clear_screen2(self):
+    def clear_screen(self):
             # for windows
         if name == 'nt':
             _ = system('cls')
@@ -40,7 +40,7 @@ class Main():
         else:
             _ = system('clear')
 
-    def clear_screen(self):
+    def clear_screen2(self):
             # for windows
         print('')
 
@@ -53,7 +53,7 @@ class Main():
             except:
                 print("connection error on UDP NMEA")
         else:
-            print("\033[91m NMEA is not activate  \033[89m")
+            print(" NMEA is not activate ")
 
         #############_init TSG_#############################
         if self.TSG['is_active']:
