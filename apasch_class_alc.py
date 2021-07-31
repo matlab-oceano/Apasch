@@ -164,29 +164,26 @@ class Apasch(object):
         
 if __name__=="__main__":
     print('classe apasch  ok')
-    # apa=Apasch()
-    # apa.campagne='Moose 2019'
-    # apa.list_apasch_files('TXT','apasch_files')
-    # apa.head=['DATE','TIME','COUNT','TYPE','LED1','LED2','LED3','NH','Ref_LED1','Ref_LED2','Ref_LED3','T_cel']
-    # apa.CTE_APASCH = {"header": None,
-    #               "sep": '\s+',
-    #               "ext": 'txt',
-    #               "col": [],
-    #               "t_format": '%Y/%m/%d %H:%M:%S',
-    #               "t_name": 'DATE_TIME',
-    #               "path": apa.DATA_DIR,
-    #               }
-    # # On transforme le premier fichier de donnees (indice 0 ) en dataframe  
-    # apa.file2dataframe(0)
-    # # On fait le calcul pour chaque cycle du fichier 
-    # print("Caclul de l'alcalinité en eaux douces : ")
-    # # un cycle tient sur 6 lignes
-    # for j in range(0,len(apa.data)//6)  :
-    #     un_cycle=apa.data[apa.data['COUNT']==j+1]
-    #     apa.calcul_alk_ed_cycle(un_cycle)
-    # # Ecriture sur un fichier txt des resultats
-            
-    # filename='catenoy_alk.txt'
-    # sep='\t'
-    # apa.data_alk_calcule.to_csv(filename,columns=['CYCLE','DATE+HEURE','TEMP','Alc 1','Alc 2','Alc 3','Alc Sb'],float_format='%.6f'
-    #            ,sep = sep,index=None)  
+    apa = Apasch()
+    apa.campagne = 'Moose 2019'
+    apa.list_apasch_files('TXT', 'apasch_files')
+    apa.head = ['DATE', 'TIME', 'COUNT', 'TYPE', 'LED1', 'LED2', 'LED3', 'NH', 'Ref_LED1', 'Ref_LED2', 'Ref_LED3',
+                'T_cel']
+    apa.CTE_APASCH = {"header": None,
+                      "sep": '\s+',
+                      "ext": 'txt',
+                      "col": [],
+                      "t_format": '%Y/%m/%d %H:%M:%S',
+                      "t_name": 'DATE_TIME',
+                      "path": apa.DATA_DIR,
+                      }
+    apa.file2dataframe(0)
+    print("pH ")
+    for j in range(0, len(apa.data) // 6):
+        un_cycle = apa.data[apa.data['COUNT'] == j + 1]
+    print(un_cycle)
+    filename = 'catenoy_alk.txt'
+    sep = '\t'
+    apa.data_alk_calcule.to_csv(filename, columns=['CYCLE', 'DATE+HEURE', 'TEMP', 'Alc 1', 'Alc 2', 'Alc 3', 'Alc Sb'],
+                                float_format='%.6f'
+                                , sep=sep, index=None)
