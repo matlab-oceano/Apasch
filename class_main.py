@@ -30,7 +30,7 @@ class Main():
         self.data_cycle=pd.DataFrame([{key: '' for key in self.SAUVE["HEADER"]}])
         self.save_Raw_ph = []
         self.save_Raw_Alc = []
-
+        self.file_sortie='data.txt'
 
     def clear_screen(self):
             # for windows
@@ -38,8 +38,12 @@ class Main():
             _ = system('cls')
             # for mac and linux(here, os.name is 'posix')
         else:
-            _ = system('clear') 
-                
+            _ = system('clear')
+
+    def clear_screen2(self):
+            # for windows
+        print('')
+
     def conf(self):
 
         #############_init UDP NMEA_########################
@@ -49,7 +53,7 @@ class Main():
             except:
                 print("connection error on UDP NMEA")
         else:
-            print("\033[91m NMEA is not activate  \033[89m")
+            print(" NMEA is not activate ")
 
         #############_init TSG_#############################
         if self.TSG['is_active']:
@@ -61,10 +65,12 @@ class Main():
         if self.GENERAL["PH_ACTIVE"]:
             print('Voie pH activé')
             self.save_Raw_ph = save_Data.Save(PARAM=self.SAUVE, type="RAW",name="PH" )
+            self.filename=self.save_Raw_ph.FID
 
         if self.GENERAL["ALC_ACTIVE"]:
             print('Voie Alcalinité activé')
             self.save_Raw_Alc = save_Data.Save(PARAM=self.SAUVE, type="RAW", name="ALC")
+            self.filename=self.save_Raw_Alc.FID
 
         return self.GENERAL
 

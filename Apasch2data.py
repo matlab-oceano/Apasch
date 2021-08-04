@@ -16,7 +16,7 @@ class calc():
         self.R0 = CTE["R0"]
         self.Rl = CTE["RL"]
         self.Rh = CTE["RH"]
-
+    
         Data = data[1::].split()
         I1 = int(Data[0])
         I2 = int(Data[1])

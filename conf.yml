@@ -55,7 +55,7 @@ GENERAL:
     M:
       send: M
       display: Macro_com_ph
-      Tr: 0.5
+      Tr: 10
     N:
       send: N
       Display: mersure Cellule

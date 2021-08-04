@@ -99,62 +99,86 @@ class commande(Main):
             # Calcul de l'alcalinité
             if count == 0 : cycle_brut.drop(0,0,inplace=True)
             apa.calcul_alk_ed_cycle(cycle_brut.tail(15))
-            return apa.data_alk_calculez
+            return apa.data_alk_calcule
+
+    def launch (self,cmd='cycle',running='True') :
+
+       # main = commande()
+        k = plot_ph()
+        a = self.filename
+        apa=Apasch()
+        print('Vous avez choisi la commande : ', cmd)
+        name = ''
+
+        fieldnames = ["Datetime", "Temp", "pH"]
+        with open('data.txt', 'w') as csv_file:
+            csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            csv_writer.writeheader()
+
+        while cmd != "stop":
+         #   cmd = input("enter mode (cycle/single/test/stop)? ")
+            if cmd == "cycle":
+                try:
+                    COUNT = 0
+                    #while COUNT < 2 :
+                    while running:
+                        if self.GENERAL["PH_ACTIVE"]:
+                            pH = self.modeAuto_Ph(COUNT,apa)
+                            print(pH)
+                            #commande().clear_screen()
+
+                            with open('data.txt', 'a') as csv_file:
+                                csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+                                info = {
+                                    "Datetime": pH.iloc[-1,0],
+                                    "Temp": pH.iloc[-1,1],
+                                    "pH": pH.iloc[-1,2]
+                                }
+
+                                csv_writer.writerow(info)
+                        if self.GENERAL["ALC_ACTIVE"]:
+                            alc = self.modeAuto_ALC(COUNT,apa)
+                            #commande().clear_screen()
+                            print(alc[['DATE+HEURE','CYCLE',
+                                                            'TEMP','Alc 1','Alc 2','Alc 3','Alc Sb']])
+                        COUNT += 1
+                except KeyboardInterrupt:
+                    print("boucle interrompue")
+
+            elif cmd == "single":
+                while name != "exit":
+                    print(name)
+                    name = input("What is your command? or exit: ")
+                    sequence = self.cmd_simple(name)
+            elif cmd == "test":
+                print(self.trame())
+                print(self.tsg())
+            elif cmd == "stop":
+                self.data_cycle
+
+
+
+
+
+
+
+    def launch2 (self,cmd,running) :
+
+        print('Vous avez choisi la commande : ', cmd)
+        while cmd != "stop":
+         #   cmd = input("enter mode (cycle/single/test/stop)? ")
+            if cmd == "cycle":
+                    while running:
+                        print(running)
+                        print('ça tourne')
+
+            elif cmd == "test":
+                print(self.trame())
+                print(self.tsg())
+            elif cmd == "stop":
+                self.data_cycle
+
 
 
 if __name__ == '__main__':
-
-
-
-    main = commande()
-    k = plot_ph()
-    a = main.filename
-    apa=Apasch()
-    cmd = ''
-    name = ''
-
-    fieldnames = ["Datetime", "Temp", "pH"]
-    with open('data.txt', 'w') as csv_file:
-        csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        csv_writer.writeheader()
-
-    while cmd != "stop":
-        cmd = input("enter mode (cycle/single/test/stop)? ")
-        if cmd == "cycle":
-            try:
-                COUNT = 0
-                #while COUNT < 2 :
-                while True:
-                    if main.GENERAL["PH_ACTIVE"]:
-                        pH = main.modeAuto_Ph(COUNT,apa)
-                        print(pH)
-                        #commande().clear_screen()
-
-                        with open('data.txt', 'a') as csv_file:
-                            csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-                            info = {
-                                "Datetime": pH.iloc[-1,0],
-                                "Temp": pH.iloc[-1,1],
-                                "pH": pH.iloc[-1,2]
-                            }
-
-                            csv_writer.writerow(info)
-                    if main.GENERAL["ALC_ACTIVE"]:
-                        alc = main.modeAuto_ALC(COUNT,apa)
-                        #commande().clear_screen()
-                        print(alc[['DATE+HEURE','CYCLE',
-                                                        'TEMP','Alc 1','Alc 2','Alc 3','Alc Sb']])
-                    COUNT += 1
-            except KeyboardInterrupt:
-                print("boucle interrompue")
-
-        elif cmd == "single":
-            while name != "exit":
-                print(name)
-                name = input("What is your command? or exit: ")
-                sequence = main.cmd_simple(name)
-        elif cmd == "test":
-            print(main.trame())
-            print(main.tsg())
-        elif cmd == "stop":
-            main.data_cycle
+    commande().launch()
