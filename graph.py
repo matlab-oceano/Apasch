@@ -19,9 +19,15 @@ class plot_ph() :
         print('Lecture du fichier : ' , self.file[-1])
         data = pd.read_csv(self.file[-1])
         if len(data)>0 :
+<<<<<<< HEAD
             x = data['Datetime'].tail(10)
             y1 = data['Temp'].tail(10)
             y2 = data['pH'].tail(10)
+=======
+            x = data['Datetime'].tail(100)
+            y1 = data['Temp'].tail(100)
+            y2 = data['pH'].tail(100)
+>>>>>>> 4df6cf04824cd63f1653c951c476d78d8e810ebc
             plt.subplot(2, 1, 1)
             plt.cla()
            # plt.tight_layout()

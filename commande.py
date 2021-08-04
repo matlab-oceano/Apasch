@@ -62,7 +62,11 @@ class commande(Main):
 
 
     def cycle(self, cycle, sauve, count):
+<<<<<<< HEAD
        # super().clear_screen()
+=======
+        super().clear_screen()
+>>>>>>> 4df6cf04824cd63f1653c951c476d78d8e810ebc
         for key in self.GENERAL[cycle]:
             it = 0
             while it < key["iteration"]:
@@ -99,7 +103,11 @@ class commande(Main):
             # Calcul de l'alcalinité
             if count == 0 : cycle_brut.drop(0,0,inplace=True)
             apa.calcul_alk_ed_cycle(cycle_brut.tail(15))
+<<<<<<< HEAD
             return apa.data_alk_calculez
+=======
+            return apa.data_alk_calcule
+>>>>>>> 4df6cf04824cd63f1653c951c476d78d8e810ebc
 
 
 if __name__ == '__main__':
