@@ -29,11 +29,7 @@ def change_state():
 
 
 def data_points():
-<<<<<<< HEAD
     data = pd.read_csv('data.txt')
-=======
-    data = pd.read_csv('data.txt').tail(25)
->>>>>>> 4df6cf04824cd63f1653c951c476d78d8e810ebc
     print(data)
     return data['Datetime'], data['Temp']
 

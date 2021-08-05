@@ -16,9 +16,6 @@ running = False
 
 
 def print_text():
-    print('uuuuu',choix)
-    print('______',running)
-    print(ph)
     if running:
         launch2(user,apa)
     window.after(1000,print_text)
@@ -152,10 +149,10 @@ radio2 = Radiobutton (right_frame,text='Single',value='single',variable=choix_ca
 radio3 = Radiobutton (right_frame,text='Test',value='test',variable=choix_calcul,command = update_choix)
 radio4 = Radiobutton (right_frame,text='Stop',value='stop',variable=choix_calcul,command = update_choix)
 
-radio1.pack(expand = YES)
-radio2.pack(expand = YES)
-radio3.pack(expand = YES)
-radio4.pack(expand = YES)
+radio1.pack(fill=X)
+radio2.pack(fill=X)
+radio3.pack(fill=X)
+radio4.pack(fill=X)
 
 # creer boutton demarrer
 
@@ -163,7 +160,7 @@ ent = Button (right_frame,
               command = lambda : [on_start()],
               text='LANCER LE CALCUL',
               font=('Helvetica',20))
-ent.pack(expand=YES)
+ent.pack(fill=X)
 
 
 cmd='True'
@@ -171,13 +168,13 @@ ent3 = Button (right_frame,
               command = lambda : app(),
               text='PLOT TK',
               font=('Helvetica',20))
-ent3.pack(expand=YES)
+ent3.pack(fill=X)
 
 ent4 = Button (right_frame,
               command = tracer,
               text='PLOT',
               font=('Helvetica',20))
-ent4.pack(expand=YES)
+ent4.pack(fill=X)
 
 
 
@@ -185,13 +182,13 @@ ent5 = Button (right_frame,
               command = on_stop,
               text='CLOTURER LE CYCLE',
               font=('Helvetica',20))
-ent5.pack(expand=YES)
+ent5.pack(fill=X)
 
 ent2 = Button (right_frame,
               command = quit,
               text='QUITTER',
               font=('Helvetica',20))
-ent2.pack(expand=YES)
+ent2.pack(fill=X)
 
 window.after(1000, print_text)
 
