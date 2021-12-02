@@ -21,8 +21,9 @@ from alk import *
 
 class Apasch(object):
     
-    def __init__(self,data=[],salinity=38,DATA_DIR='',apasch_files=[''],campagne='campagne',CTE_APASCH={},head=['']):
+    def __init__(self,data=[],water='douce',salinity=38,DATA_DIR='',apasch_files=[''],campagne='campagne',CTE_APASCH={},head=['']):
         self.head=head
+        self.water=water
         self.data=data
         self.salinity=salinity
         self.apasc_file=apasch_files
@@ -150,11 +151,11 @@ class Apasch(object):
             , axis=0, join="inner",ignore_index=True)
         return True
     
-    def calcul_alk_ed_cycle(self,un_cycle): 
+    def calcul_alk_ed_cycle(self,un_cycle,water='douce'):
         # moyennes du cycle
         moyennes=param_alk().calcul_moyenne (un_cycle)
         # calcul des differentes alcalinites
-        alk=param_alk().caclul_alcalinites (un_cycle)
+        alk=param_alk().caclul_alcalinites (un_cycle,water,pka_ind=3.8)
         # concatenation
         alc=pd.concat([moyennes, alk], axis=1, join="inner")
         self.data_alk_calcule=pd.concat([self.data_alk_calcule,alc]

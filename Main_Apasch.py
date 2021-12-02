@@ -151,6 +151,7 @@ class Main():
 
     
     def modeAuto_Ph(self, count , apa):
+
             self.cycle("PH1", self.save_Raw_ph, count)
             cycle_brut=self.data_cycle
             if count == 0 : cycle_brut.drop(0,0,inplace=True)
